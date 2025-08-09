@@ -95,7 +95,7 @@ python filter_failedres.py \
 ```
 
 ## Contact Informaiton
-If you have any questions, please contact me at <_
+If you have any questions, please contact me at <yanglin_deng@163.com>
 
 
 
