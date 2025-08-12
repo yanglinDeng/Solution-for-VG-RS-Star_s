@@ -5,8 +5,8 @@ step1:
   width: [1120,2240,3360,3360]
   height: [1120,3360,2240,3360]
   model_name: "Qwen2.5-VL-72B-Instruct"
-  api_key: "sk-R9_IT6ASeuOUV7TzlxUQoA"
-  base_url: "https://llmapi.paratera.com/v1/"
+  api_key: ""
+  base_url: ""
   image_path:  "/data_C/yanglin/Qwen2.5-VL/VG-RS/images"
   question_path:  "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json"
   failure_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/failed_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_2240_3360.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_3360.json"]
@@ -22,8 +22,8 @@ step2:
   width: [ 1120,2240,3360,3360 ]
   height: [ 1120,3360,2240,3360 ]
   model_name: "Qwen2.5-VL-72B-Instruct"
-  api_key: "sk-R9_IT6ASeuOUV7TzlxUQoA"
-  base_url: "https://llmapi.paratera.com/v1/"
+  api_key: ""
+  base_url: ""
   image_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS/images"
   question_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json"
   recored_failed_samples_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/failed_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_2240_3360.json", "/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_3360.json"]
@@ -66,4 +66,5 @@ step4:
   root_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS"
   merged_path: "/data_C/yanglin/Qwen2.5-VL/ceshi//merged_total.json"
   saved_json_path: "/data_C/yanglin/Qwen2.5-VL/ceshi/selected_results.json"
+
 
