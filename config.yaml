@@ -8,7 +8,7 @@ step1:
   api_key: "sk-R9_IT6ASeuOUV7TzlxUQoA"
   base_url: "https://llmapi.paratera.com/v1/"
   image_path:  "/data_C/yanglin/Qwen2.5-VL/VG-RS/images"
-  question_path:  "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question2.json"
+  question_path:  "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json"
   failure_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/failed_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_2240_3360.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_3360.json"]
   success_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/success_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/success_2240_3360.json","/data_C/yanglin/Qwen2.5-VL/ceshi/success_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/success_3360_3360.json"]
   success_vis_dir: ["/data_C/yanglin/Qwen2.5-VL/ceshi/success_vis_1120_1120", "/data_C/yanglin/Qwen2.5-VL/ceshi/success_vis_2240_3360","/data_C/yanglin/Qwen2.5-VL/ceshi/success_vis_3360_2240","/data_C/yanglin/Qwen2.5-VL/ceshi/success_vis_3360_3360"]
@@ -25,7 +25,7 @@ step2:
   api_key: "sk-R9_IT6ASeuOUV7TzlxUQoA"
   base_url: "https://llmapi.paratera.com/v1/"
   image_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS/images"
-  question_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question2.json"
+  question_path: "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json"
   recored_failed_samples_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/failed_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_2240_3360.json", "/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/failed_3360_3360.json"]
   failure_json: [ "/data_C/yanglin/Qwen2.5-VL/ceshi/second_failed_1120_1120.json", "/data_C/yanglin/Qwen2.5-VL/ceshi/second_failed_2240_3360.json","/data_C/yanglin/Qwen2.5-VL/ceshi/second_failed_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/second_failed_3360_3360.json" ]
   success_json: ["/data_C/yanglin/Qwen2.5-VL/ceshi/second_success_1120_1120.json","/data_C/yanglin/Qwen2.5-VL/ceshi/second_success_2240_3360.json", "/data_C/yanglin/Qwen2.5-VL/ceshi/second_success_3360_2240.json","/data_C/yanglin/Qwen2.5-VL/ceshi/second_success_3360_3360.json" ]
@@ -36,7 +36,7 @@ step2:
 
 # step3 参数 对应merge_order.py
 step3:
-  base: "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question2.json"
+  base: "/data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json"
   results:
     - /data_C/yanglin/Qwen2.5-VL/ceshi/success_1120_1120.json
     - /data_C/yanglin/Qwen2.5-VL/ceshi/success_2240_3360.json
@@ -52,7 +52,7 @@ step3:
 # step3 参数 对应dino_select.py
 step4:
   json_files:
-    - /data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question2.json
+    - /data_C/yanglin/Qwen2.5-VL/VG-RS/VG-RS-question.json
     - /data_C/yanglin/Qwen2.5-VL/ceshi/success_1120_1120.json
     - /data_C/yanglin/Qwen2.5-VL/ceshi/success_2240_3360.json
     - /data_C/yanglin/Qwen2.5-VL/ceshi/success_3360_2240.json
