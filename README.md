@@ -22,10 +22,14 @@ You should first edit the "config.yaml" for your own settings.
 After you have done all the preparation work, you can run following commands:
 
 ```
-chmod +x run.sh
-./run.sh
+chmod +x reproduce.sh
+./reproduce.sh
 ```
 
 
 ## Contact Informaiton
 If you have any questions, please contact me at <yanglin_deng@163.com>
+
+
+
+
