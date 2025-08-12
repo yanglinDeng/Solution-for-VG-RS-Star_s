@@ -3,6 +3,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import List, Dict, Any
+import yaml
 
 def load_json(p: Path) -> List[Dict[str, Any]]:
     if not p.is_file():
@@ -13,12 +14,12 @@ def load_json(p: Path) -> List[Dict[str, Any]]:
 def merge_results(base_path: Path,
                   result_paths: List[Path]) -> List[Dict[str, Any]]:
     """按 result_paths 的顺序（越靠后优先级越高）合并结果"""
-    base = load_json(base_path)
+    base = load_json(Path(base_path))
 
     # 倒序读取，保证后出现的覆盖先出现的
     lookup: Dict[tuple, Dict[str, Any]] = {}
     for p in reversed(result_paths):
-        for rec in load_json(p):
+        for rec in load_json(Path(p)):
             key = (rec.get('image_path'), rec.get('question'))
             lookup[key] = rec            # 后写入的优先级高
 
@@ -31,32 +32,21 @@ def merge_results(base_path: Path,
     return merged
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Merge multiple model-result JSON files according to priority."
-    )
-    parser.add_argument('--base',
-                        type=Path,
-                        required=True,
-                        help='Path to the base JSON (defines the final order)')
-    parser.add_argument('--results',
-                        type=Path,
-                        nargs='+',
-                        required=True,
-                        help='Result JSON files in priority order (last one wins)')
-    parser.add_argument('--output',
-                        type=Path,
-                        required=True,
-                        help='Where to save the merged JSON')
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', required=True,
+                        help='全局配置文件路径')
     args = parser.parse_args()
+    with open(args.config, 'r', encoding='utf-8') as f:
+        cfg = yaml.safe_load(f)
 
-    merged = merge_results(args.base, args.results)
+    cfg=cfg["step3"]
 
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    with args.output.open('w', encoding='utf-8') as f_out:
+    merged = merge_results(cfg["base"], cfg["results"])
+
+    with open(cfg["output"],'w+', encoding='utf-8') as f_out:
         json.dump(merged, f_out, ensure_ascii=False, indent=2)
 
-    print(f'Merged {len(merged)} records → {args.output}')
+    print(f'Merged {len(merged)} records → {cfg["output"]}')
 
 if __name__ == '__main__':
     main()
