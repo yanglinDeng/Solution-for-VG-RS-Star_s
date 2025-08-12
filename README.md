@@ -39,7 +39,7 @@ If you have any questions or suggestions, feel free to reach out to the maintain
 | Name             | Email                          |
 |------------------|--------------------------------|
 | Yanglin Deng     | yanglin_deng@163.com           |
-| Jinglin Zhou     | 6233114044@jiangnan.edu.cn     |
+| Jinglin Zhou     | 6233114044@stu.jiangnan.edu.cn     |
 | Hongyao Chen     | 6233111020@stu.jiangnan.edu.cn |
 | Wei Zhang        | phenixnull@gmail.com           |
 | Yijie Zhou       | zxj165561@gmail.com            |
