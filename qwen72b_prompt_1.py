@@ -6,61 +6,31 @@ import numpy as np
 import random
 import ast
 from PIL import Image
-import os
+import os,yaml
 from openai import OpenAI
 import re
 import json
 result = []
 failed_list=[]
 
-def encode_local_image(image_path):
+def encode_local_image(image_path,cfg):
     image = cv2.imread(image_path)
-    resized_image = cv2.resize(image, (w,h))
+    resized_image = cv2.resize(image, (cfg["width"][cfg["ind"]],cfg["height"][cfg["ind"]]))
     _, jpeg_bytes = cv2.imencode('.jpg', resized_image)
     base64_data = base64.b64encode(jpeg_bytes).decode("utf-8")
     return f"data:image/jpeg;base64,{base64_data}"
 
 
-def get_args_parser():
-    parser = argparse.ArgumentParser('Visual grounding with Qwen2.5-VL-72B API', add_help=False)
-    parser.add_argument('--seed', default=42, type=int)
-    # 1. 两个必填整数：宽、高
-    parser.add_argument("--width", type=int, required=True,
-                        help="Target width in pixels (e.g., 1120)")
-    parser.add_argument("--height", type=int, required=True,
-                        help="Target height in pixels (e.g., 1120)")
-
-    # 2. 大模型连接信息（必填）
-    parser.add_argument("--model_name", default="Qwen2.5-VL-72B-Instruct",type=str, required=True,
-                        help="Name or identifier of the large model")
-    parser.add_argument("--api_key", type=str, required=True,
-                        help="OpenAI-style API key")
-    parser.add_argument("--base_url", type=str, required=True,
-                        help="Base URL of the inference endpoint")
-
-    # 3. 三个必填文件/目录路径
-    parser.add_argument("--image_path", type=Path, required=True,
-                        help="Path to the testing images.")
-    parser.add_argument("--question_path", type=Path, required=True,
-                        help="Path to the testing question.")
-    parser.add_argument("--failure_json", type=Path, required=True,
-                        help="Path to the failed sample JSON file")
-    parser.add_argument("--success_json", type=Path, required=True,
-                        help="Path to the successful sample JSON file")
-    parser.add_argument("--success_vis_dir", type=Path, required=True,
-                        help="Directory containing visualized images for successful samples")
-    args = parser.parse_args()
-    return args
 
 
-def get_position_info(image_path, ques_str,args):
+def get_position_info(image_path, ques_str,cfg):
     try:
         client = OpenAI(
-            api_key=args.api_key,
-            base_url=args.base_url
+            api_key=cfg["api_key"],
+            base_url=cfg["base_url"]
         )
 
-        image_data_url = encode_local_image(image_path)
+        image_data_url = encode_local_image(image_path,cfg)
 
         format_instruction = (
             "I will provide you with an image and several questions. "
@@ -82,7 +52,7 @@ def get_position_info(image_path, ques_str,args):
             )
         
         completion = client.chat.completions.create(
-            model=args.model_name,
+            model=cfg["model_name"],
 
             messages=[
                 {"role": "user", "content": [{"type": "text", "text": format_instruction}]},
@@ -95,8 +65,8 @@ def get_position_info(image_path, ques_str,args):
                                 "url": image_data_url
                             },
                             "detail": "high",
-                            "min_pixels":args.height*args.width-1,
-                            "max_pixels":args.height*args.width+1
+                            "min_pixels":cfg["height"][cfg["ind"]]*cfg["width"][cfg["ind"]]-1,
+                            "max_pixels":cfg["height"][cfg["ind"]]*cfg["width"][cfg["ind"]]+1
                         },
                         {"type": "text", "text": ques_str}
                     ]
@@ -130,9 +100,9 @@ def res_error(img_path,ques):
     }
     return fail
 
-def detect(data, img_path, ques_list, ind, jnd, ori_ques_list, oh, ow,args):
+def detect(data, img_path, ques_list, ind, jnd, ori_ques_list, oh, ow,cfg):
     image = cv2.imread(img_path)
-    answer = get_position_info(img_path, str(ques_list),args)
+    answer = get_position_info(img_path, str(ques_list),cfg)
     if answer is None:
         failed_list.append(res_error(img_path, ori_ques_list[0]))
         return ind + 1
@@ -179,8 +149,8 @@ def detect(data, img_path, ques_list, ind, jnd, ori_ques_list, oh, ow,args):
                 if abs_x1 == 0 and abs_x2 == 0 and abs_y1 == 0 and abs_y2 == 0:
                     failed_list.append(res_error(img_path, ori_ques_list[s]))
                     continue
-                tx1, tx2 = round((ow / args.width) * abs_x1), round((ow / args.width) * abs_x2)
-                ty1, ty2 = round((oh / args.height) * abs_y1), round((oh / args.height) * abs_y2)
+                tx1, tx2 = round((ow / cfg["width"][cfg["ind"]]) * abs_x1), round((ow / cfg["width"][cfg["ind"]]) * abs_x2)
+                ty1, ty2 = round((oh / cfg["height"][cfg["ind"]]) * abs_y1), round((oh / cfg["height"][cfg["ind"]]) * abs_y2)
                 content = {
                     "image_path": data[ind]['image_path'],
                     'question': ori_ques_list[s],
@@ -192,23 +162,26 @@ def detect(data, img_path, ques_list, ind, jnd, ori_ques_list, oh, ow,args):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 1, cv2.LINE_AA)
                 cv2.putText(image, answer_object[skey]['label'], (tx1, ty1 - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
-    cv2.imwrite(args.success_vis_dir + data[ind]["image_path"].split("images\\")[1], image)
-    with open(args.success_dir, "w+", encoding="utf-8") as f:
+    cv2.imwrite(cfg["success_vis_dir"][cfg["ind"]] +"/"+ data[ind]["image_path"].split("images\\")[1], image)
+    with open(cfg["success_json"][cfg["ind"]], "w+", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print("success for the {} samples!".format(jnd))
     return jnd
 
 
-def main(args):
+def main(cfg):
     # ------------------------------------------hongyao--------------------------------------------------------------------------------
-    seed = args.seed
+    seed = cfg["seed"]
     print(f"Using random seed: {seed}")
     np.random.seed(seed)
     random.seed(seed)
-    root = args.image_path
-    json_path = args.question_path
-    with json_path.open('r', encoding='utf-8') as f:
+    root = cfg["image_path"]
+    json_path = cfg["question_path"]
+    with open(json_path,'r', encoding='utf-8') as f:
         data = json.load(f)
+    success_vis_path = Path(cfg["success_vis_dir"][cfg["ind"]])  # 换成你的路径
+
+    success_vis_path.mkdir(parents=True, exist_ok=True)
     # --------------------------------test for all samples------------------------
     i = 0
     while i < len(data):
@@ -225,12 +198,18 @@ def main(args):
             ow, oh = img.size  # (W, H)
         print(ow, oh)
         ques_list = [q.replace('\n', '').replace('\t', '') for q in ori_ques_list]
-        i = detect(data, img_path, ques_list, i, j, ori_ques_list, oh, ow,args)
-    with open(args.failure_json, "w+", encoding="utf-8") as f:
+        i = detect(data, img_path, ques_list, i, j, ori_ques_list, oh, ow,cfg)
+
+    with open(cfg["failure_json"][cfg["ind"]], "w+", encoding="utf-8") as f:
         json.dump(failed_list, f, ensure_ascii=False, indent=2)
     print("success for the {} failed samples!".format(len(failed_list)))
 
 
 if __name__ == '__main__':
-    args = get_args_parser()
-    main(args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--config', required=True,
+                        help='全局配置文件路径')
+    args = parser.parse_args()
+    with open(args.config, 'r', encoding='utf-8') as f:
+        cfg = yaml.safe_load(f)
+    main(cfg['step1'])
